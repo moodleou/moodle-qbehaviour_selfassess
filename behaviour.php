@@ -132,7 +132,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         if ($stars < 0 || $stars > 5) {
             throw new coding_exception('Number of stars must be between 0 and 5 inclusive.');
         }
-        $pendingstep->set_fraction($stars/5);
+        $pendingstep->set_fraction($stars / 5);
         $pendingstep->set_state($this->qa->get_state()->corresponding_commented_state(
                 $pendingstep->get_fraction()));
         return question_attempt::KEEP;

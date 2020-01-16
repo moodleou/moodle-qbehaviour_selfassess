@@ -63,7 +63,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         // TODO check current output.
         $this->save_quba();
 
-        // Now manually grade
+        // Now manually grade.
         $this->process_submission(['-manualcomment' => 'Sounds OK', '-stars' => '4', '-save' => '1']);
 
         $this->check_current_state(question_state::$mangrpartial);

@@ -91,14 +91,14 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         $editorformat = '';
         if (count($formats) == 1) {
             reset($formats);
-            $editorformat .= html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => $inputname . 'format', 'value' => key($formats)));
+            $editorformat .= html_writer::empty_tag('input', ['type' => 'hidden',
+                    'name' => $inputname . 'format', 'value' => key($formats)]);
         } else {
-            $editorformat = html_writer::start_tag('div', array('class' => 'fitem'));
-            $editorformat .= html_writer::start_tag('div', array('class' => 'fitemtitle'));
-            $editorformat .= html_writer::tag('label', get_string('format'), array('for'=>'menu'.$inputname.'format'));
+            $editorformat = html_writer::start_tag('div', ['class' => 'fitem']);
+            $editorformat .= html_writer::start_tag('div', ['class' => 'fitemtitle']);
+            $editorformat .= html_writer::tag('label', get_string('format'), ['for' => 'menu' . $inputname . 'format']);
             $editorformat .= html_writer::end_tag('div');
-            $editorformat .= html_writer::start_tag('div', array('class' => 'felement fhtmleditor'));
+            $editorformat .= html_writer::start_tag('div', ['class' => 'felement fhtmleditor']);
             $editorformat .= html_writer::select($formats, $inputname.'format', $commentformat, '');
             $editorformat .= html_writer::end_tag('div');
             $editorformat .= html_writer::end_tag('div');

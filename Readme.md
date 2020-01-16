@@ -1,4 +1,4 @@
-# Self-assessment question behaviour [![Build Status](https://travis-ci.org/moodleou/moodle-qbehaviour_selfassess.svg?branch=master)] (https://travis-ci.org/moodleou/moodle-qbehaviour_selfassess)
+# Self-assessment question behaviour [![Build Status](https://travis-ci.org/moodleou/moodle-qbehaviour_selfassess.svg?branch=master)](https://travis-ci.org/moodleou/moodle-qbehaviour_selfassess)
 
 This question behaviour allows students to self-assess their own attempt
 at a question. At the moment it only works with the Record audio question type,
