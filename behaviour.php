@@ -60,6 +60,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             $expecteddata['stars'] = PARAM_INT;
             $expecteddata['selfcomment'] = PARAM_RAW;
             $expecteddata['selfcommentformat'] = PARAM_INT;
+            $expecteddata['rate'] = PARAM_BOOL;
         }
         return $expecteddata;
     }
@@ -105,7 +106,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             return question_attempt::DISCARD;
         }
 
-        $response = $this->qa->get_last_step()->get_qt_data();
+        $response = $pendingstep->get_qt_data();
         if (!$this->question->is_gradable_response($response)) {
             $pendingstep->set_state(question_state::$gaveup);
         } else {
