@@ -54,6 +54,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+        $this->assertNotContains('<select', $this->currentoutput);
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -64,18 +66,34 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        // TODO check current output.
-        $this->save_quba();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertNotContains('selected="selected"', $this->currentoutput);
 
-        // Now manually grade.
+        // Now self-assess.
         $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(4);
         $this->check_step_count(3);
-        // TODO check current output.
-        $this->save_quba();
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(4);
+        $this->check_step_count(3);
+        $this->render();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertEquals('Self-assessed 4 stars with comment: Sounds OK',
+                $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
+
+        // Re-submitting the same self-assessment should not change the grade.
+        $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
+                '-stars' => '4', '-rate' => '1']);
+
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(4);
+        $this->check_step_count(3);
     }
 
     public function test_selfassess_audio_no_comment() {
@@ -98,6 +116,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+        $this->assertNotContains('<select', $this->currentoutput);
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -108,16 +128,88 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        // TODO check current output.
-        $this->save_quba();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertNotContains('selected="selected"', $this->currentoutput);
 
-        // Now manually grade.
+        // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(4);
         $this->check_step_count(3);
-        // TODO check current output.
-        $this->save_quba();
+        $this->render();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertEquals('Self-assessed 4 stars with no comment',
+                $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
+
+        // Re-submitting the same self-assessment should not change the grade.
+        $this->process_submission(['-stars' => '4', '-rate' => '1']);
+
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(4);
+        $this->check_step_count(3);
+    }
+
+    public function test_selfassess_no_audio() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/'); // Required to output a text editor without errors.
+
+        // Create a recordrtc question in the DB.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'interactive', 5);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+        $this->assertNotContains('<select', $this->currentoutput);
+
+        // Try to submit a blank response, and check it is rejected.
+        $response = $this->setup_empty_submission_fileares();
+        $response['-submit'] = '1';
+        $this->process_submission($response);
+
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        $this->assertNotContains('<select', $this->currentoutput);
+        $this->assertContains('Please record something.', $this->currentoutput);
+
+        // Submit all and finish even though not submission was made. Verify you can still self-grade.
+        $this->finish();
+
+        $this->check_current_state(question_state::$gaveup);
+        $this->check_current_mark(null);
+        $this->check_step_count(3);
+        $this->render();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertNotContains('selected="selected"', $this->currentoutput);
+
+        // Now self-assess.
+        $this->process_submission(['-stars' => '4', '-rate' => '1']);
+
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(4);
+        $this->check_step_count(4);
+        $this->render();
+        $this->assertContains('<select', $this->currentoutput);
+        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
+        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertEquals('Self-assessed 4 stars with no comment',
+                $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
     }
 }

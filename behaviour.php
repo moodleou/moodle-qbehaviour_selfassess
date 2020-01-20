@@ -172,7 +172,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         $previousstars = $this->qa->get_last_behaviour_var('stars');
         $newstars = $pendingstep->get_behaviour_var('stars');
 
-        return $previousstars !== $newstars;
+        return (string) $previousstars === (string) $newstars;
     }
 
     public function summarise_action(question_attempt_step $step) {
