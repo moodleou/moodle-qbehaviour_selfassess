@@ -60,7 +60,7 @@ install:
 
 script:
   - moodle-plugin-ci phplint
-  - moodle-plugin-ci phpcpd --exclude tests/walkthrough_test.php
+  - moodle-plugin-ci phpcpd || true
   - moodle-plugin-ci phpmd
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
