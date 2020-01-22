@@ -74,10 +74,10 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
                 '-stars' => '4', '-rate' => '1']);
 
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
@@ -91,7 +91,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
                 '-stars' => '4', '-rate' => '1']);
 
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
     }
@@ -135,7 +135,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
 
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
@@ -148,7 +148,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         // Re-submitting the same self-assessment should not change the grade.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
 
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
     }
@@ -202,7 +202,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
 
-        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(4);
         $this->render();
