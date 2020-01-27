@@ -66,50 +66,20 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         $name = $qa->get_behaviour_field_name('stars');
         $output .= html_writer::div(
                 html_writer::tag('label', get_string('rateyourself', 'qbehaviour_selfassess'), ['for' => $name]) .
-                $this->help_icon('rateyourself', 'qbehaviour_selfassess') .
+                ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') .
                 html_writer::select($starchoices, $name, $stars, ['' => 'choosedots'], ['id' => $name]),
                 'self-assessment');
 
         // Editor for the comment.
-        $inputname = $qa->get_behaviour_field_name('selfcomment');
-        $id = $inputname . '_id';
+
         list($comment, $commentformat) = $this->get_last_self_comment($qa);
+        $inputname = $qa->get_behaviour_field_name('selfcomment');
 
-        $editor = editors_get_preferred_editor($commentformat);
-        $strformats = format_text_menu();
-        $formats = $editor->get_supported_formats();
-        foreach ($formats as $fid) {
-            $formats[$fid] = $strformats[$fid];
-        }
-
-        $editor->set_text($comment);
-        $editor->use_editor($id, question_utils::get_editor_options($options->context));
-
-        $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($comment),
-                array('id' => $id, 'name' => $inputname, 'rows' => 5, 'cols' => 60)));
-
-        $editorformat = '';
-        if (count($formats) == 1) {
-            reset($formats);
-            $editorformat .= html_writer::empty_tag('input', ['type' => 'hidden',
-                    'name' => $inputname . 'format', 'value' => key($formats)]);
-        } else {
-            $editorformat = html_writer::start_tag('div', ['class' => 'fitem']);
-            $editorformat .= html_writer::start_tag('div', ['class' => 'fitemtitle']);
-            $editorformat .= html_writer::tag('label', get_string('format'), ['for' => 'menu' . $inputname . 'format']);
-            $editorformat .= html_writer::end_tag('div');
-            $editorformat .= html_writer::start_tag('div', ['class' => 'felement fhtmleditor']);
-            $editorformat .= html_writer::select($formats, $inputname.'format', $commentformat, '');
-            $editorformat .= html_writer::end_tag('div');
-            $editorformat .= html_writer::end_tag('div');
-        }
-
-        $output .= html_writer::tag('div', html_writer::tag('div',
-                        html_writer::tag('label', get_string('comment', 'question'),
-                                array('for' => $id)), array('class' => 'fitemtitle')) .
-                html_writer::tag('div', $commenteditor, array('class' => 'felement fhtmleditor', 'data-fieldtype' => "editor")),
-                array('class' => 'fitem'));
-        $output .= $editorformat;
+        $output .= html_writer::div(
+                html_writer::tag('label', get_string('comment', 'question'), ['for' => $inputname]) .
+                ' ' . html_writer::tag('textarea', s($comment),
+                        ['id' => $inputname, 'name' => $inputname, 'rows' => 2, 'cols' => 60]),
+                'self-assess-comment');
 
         // Save button.
         $attributes = [

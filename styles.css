@@ -1,0 +1,4 @@
+.que.selfassess .self-assess-comment label,
+.que.selfassess .self-assess-comment textarea {
+    vertical-align: baseline;
+}
