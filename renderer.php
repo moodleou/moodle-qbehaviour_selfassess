@@ -29,6 +29,13 @@ defined('MOODLE_INTERNAL') || die();
  * Renderer for outputting parts of a question belonging to the self-assessment behaviour.
  */
 class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
+
+    /**
+     * The number of stars to be displayed for rating.
+     * The displayed stars are internally numbered as 1 to n(this constant) from left to right.
+     */
+    const MAX_NUMBER_OF_STARS = 5;
+
     public function controls(question_attempt $qa, question_display_options $options) {
         return $this->submit_button($qa, $options);
     }
@@ -51,27 +58,16 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
     }
 
     public function self_assessment_editable(question_attempt $qa, question_display_options $options) {
-        $output = '';
-
-        // Select menu for stars. TODO improve this.
-        $starchoices = [
-            "\u{2606}\u{2606}\u{2606}\u{2606}\u{2606}",
-            "\u{2605}\u{2606}\u{2606}\u{2606}\u{2606}",
-            "\u{2605}\u{2605}\u{2606}\u{2606}\u{2606}",
-            "\u{2605}\u{2605}\u{2605}\u{2606}\u{2606}",
-            "\u{2605}\u{2605}\u{2605}\u{2605}\u{2606}",
-            "\u{2605}\u{2605}\u{2605}\u{2605}\u{2605}",
-        ];
         $stars = $qa->get_last_behaviour_var('stars');
         $name = $qa->get_behaviour_field_name('stars');
-        $output .= html_writer::div(
+        $html = $this->star_rating_select($name, (int)$stars);
+        $output = '';
+        $output .= html_writer::span(
                 html_writer::tag('label', get_string('rateyourself', 'qbehaviour_selfassess'), ['for' => $name]) .
-                ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') .
-                html_writer::select($starchoices, $name, $stars, ['' => 'choosedots'], ['id' => $name]),
-                'self-assessment');
+                ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') . ' ' .
+                html_writer::tag('span', $html, ['id' => 'rating']), 'self-assessment');
 
         // Editor for the comment.
-
         list($comment, $commentformat) = $this->get_last_self_comment($qa);
         $inputname = $qa->get_behaviour_field_name('selfcomment');
 
@@ -101,7 +97,7 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
 
         $stars = $qa->get_last_behaviour_var('stars');
         $output .= html_writer::div(get_string('selfassessment', 'qbehaviour_selfassess',
-                str_repeat("\u{2605}", $stars) . str_repeat("\u{2606}", $stars)),
+                str_repeat("\u{2605}", $stars) . str_repeat("\u{2606}", self::MAX_NUMBER_OF_STARS - $stars)),
                 'self-assessment');
 
         list($comment, $commentformat) = $this->get_last_self_comment($qa);
@@ -135,5 +131,40 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         }
 
         return $comment;
+    }
+
+    /**
+     * Return HTML structure (hidden radio button input fields labeled with appropriate icons as rating stars).
+     * @param string $name , unique name for the question on the page
+     * @param int $currentstars , last/current rating number
+     * @return string, html structure
+     * @throws coding_exception
+     */
+    protected function star_rating_select(string $name, int $currentstars) {
+        $fieldset = "<fieldset id=\"rating\" class=\"rating invisiblefieldset\"><span class=\"stars\">";
+        for ($i = 0; $i < self::MAX_NUMBER_OF_STARS + 1; $i++) {
+            $rated = get_string('rated', 'qbehaviour_selfassess', $i);
+            if ($i == 0) {
+                $notrated = $this->pix_icon('notrated', get_string('rated', 'qbehaviour_selfassess', $i),
+                    'qbehaviour_selfassess', ['class' => 'notrated']);
+                $fieldset .= "<label for=\"$name-$i\">
+                                <span class=\"notrated\">$notrated</span>
+                            </label>";
+            } else {
+                $starempty = $this->pix_icon('starempty', $rated, 'qbehaviour_selfassess', ['class' => 'rated']);
+                $starfilled = $this->pix_icon('starfilled', $rated, 'qbehaviour_selfassess', ['class' => 'rated']);
+                $fieldset .= "<label for=\"$name-$i\">
+                        <span class=\"empty\">$starempty</span>
+                        <span class=\"filled\">$starfilled</span>
+                    </label>";
+            }
+            $checked = '';
+            if ($i == $currentstars) {
+                $checked = 'checked="checked"';
+            }
+            $fieldset .= "<input id=\"$name-$i\" type=\"radio\" name=\"$name\" $checked class=\"accesshide\" value=\"$i\">";
+        }
+        $fieldset .= "</span></fieldset>";
+        return $fieldset;
     }
 }

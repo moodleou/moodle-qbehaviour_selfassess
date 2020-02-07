@@ -25,6 +25,7 @@
 $string['comment'] = 'Comments in your evaluation (optional)';
 $string['pluginname'] = 'Self-assessment';
 $string['privacy:metadata'] = 'The self-assessment question behaviour plugin does not store any personal data itself. All the data is stored by the core question system.';
+$string['rated'] = 'Rated {$a} stars';
 $string['rateyourself'] = 'Rate your response';
 $string['rateyourself_help'] = 'Considering the guidance in the feedback, how would you rate the response you gave to this question?';
 $string['selfassessed'] = 'Self-assessed {$a->stars} stars with no comment';

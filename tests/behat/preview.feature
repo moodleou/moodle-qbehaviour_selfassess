@@ -24,20 +24,22 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
 
-  Scenario: Preview a question and try to submit nothing.
+  Scenario: Preview a question and try to submit a response with rating/comment.
     Given the following config values are set as admin:
       | behaviour | immediatefeedback | question_preview |
+      | history   | shown             | question_preview |
     When I choose "Preview" action for "Record audio question" in the question bank
     And I switch to "questionpreview" window
     Then I should see "Please record yourself talking about Moodle."
+    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Check"
-    And I should see "Not answered"
-    And I should see "I hope you spoke clearly and coherently."
-    And I set the following fields to these values:
-      | Rate your response | ★★★★☆        |
-      | Comment            | Seems OK to me. |
+    Then I should see "Submit: File recording.ogg"
+    And I click on "Rated 2 stars" "icon"
     And I press "Save"
-    And the following fields match these values:
-      | Rate your response | ★★★★☆        |
-      | Comment            | Seems OK to me. |
+    Then I should see "Self-assessed 2 stars with no comment"
+    And I click on "Rated 5 stars" "icon"
+    And I set the following fields to these values:
+      | Comment       | Seems OK to me. |
+    And I press "Save"
+    Then I should see "Self-assessed 5 stars with comment: Seems OK to me."
     And I switch to the main window

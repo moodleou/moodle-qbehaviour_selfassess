@@ -2,3 +2,29 @@
 .que.selfassess .self-assess-comment textarea {
     vertical-align: baseline;
 }
+
+.que.selfassess .notrated {
+    width: 16px;
+    height: 16px;
+    margin-right: 0;
+}
+
+.que.selfassess .rated {
+    width: 24px;
+    height: 24px;
+    margin-right: 0;
+}
+
+.que.selfassess .stars label {
+    cursor: pointer;
+}
+
+.que.selfassess .rating label .filled,
+.que.selfassess .rating [type="radio"]:checked ~ label .empty {
+    display: inline;
+}
+
+.que.selfassess .rating label .empty,
+.que.selfassess .rating [type="radio"]:checked ~ label .filled {
+    display: none;
+}
