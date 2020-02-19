@@ -55,7 +55,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertNotContains('<select', $this->currentoutput);
+        $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -66,9 +66,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertNotContains('selected="selected"', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="0">', $this->currentoutput);
 
         // Now self-assess.
         $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
@@ -81,9 +81,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="4">', $this->currentoutput);
         $this->assertEquals('Self-assessed 4 stars with comment: Sounds OK',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
@@ -117,7 +117,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertNotContains('<select', $this->currentoutput);
+        $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -128,9 +128,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertNotContains('selected="selected"', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="0">', $this->currentoutput);
 
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
@@ -139,9 +139,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="4">', $this->currentoutput);
         $this->assertEquals('Self-assessed 4 stars with no comment',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
@@ -174,7 +174,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertNotContains('<select', $this->currentoutput);
+        $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
 
         // Try to submit a blank response, and check it is rejected.
         $response = $this->setup_empty_submission_fileares();
@@ -185,7 +185,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertNotContains('<select', $this->currentoutput);
+        $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
         $this->assertContains('Please record something.', $this->currentoutput);
 
         // Submit all and finish even though not submission was made. Verify you can still self-grade.
@@ -195,9 +195,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('><option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertNotContains('selected="selected"', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="0">', $this->currentoutput);
 
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
@@ -206,9 +206,9 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(4);
         $this->render();
-        $this->assertContains('<select', $this->currentoutput);
-        $this->assertContains('<option value="5">★★★★★</option>', $this->currentoutput);
-        $this->assertContains('<option selected="selected" value="4">★★★★☆</option>', $this->currentoutput);
+        $this->assertContains('<fieldset class="rating invisiblefieldset"><span class="stars">', $this->currentoutput);
+        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertContains('checked="checked" class="accesshide" value="4">', $this->currentoutput);
         $this->assertEquals('Self-assessed 4 stars with no comment',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
     }

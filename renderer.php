@@ -60,12 +60,12 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
     public function self_assessment_editable(question_attempt $qa, question_display_options $options) {
         $stars = $qa->get_last_behaviour_var('stars');
         $name = $qa->get_behaviour_field_name('stars');
-        $html = $this->star_rating_select($name, (int)$stars);
+        $starratinghtml = $this->star_rating_select($name, (int) $stars);
         $output = '';
         $output .= html_writer::span(
                 html_writer::tag('label', get_string('rateyourself', 'qbehaviour_selfassess'), ['for' => $name]) .
                 ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') . ' ' .
-                html_writer::tag('span', $html, ['id' => 'rating']), 'self-assessment');
+                html_writer::tag('span', $starratinghtml, ['id' => 'rating']), 'self-assessment');
 
         // Editor for the comment.
         list($comment, $commentformat) = $this->get_last_self_comment($qa);
@@ -141,7 +141,7 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      * @throws coding_exception
      */
     protected function star_rating_select(string $name, int $currentstars) {
-        $fieldset = "<fieldset id=\"rating\" class=\"rating invisiblefieldset\"><span class=\"stars\">";
+        $fieldset = "<fieldset class=\"rating invisiblefieldset\"><span class=\"stars\">";
         for ($i = 0; $i < self::MAX_NUMBER_OF_STARS + 1; $i++) {
             $rated = get_string('rated', 'qbehaviour_selfassess', $i);
             if ($i == 0) {
