@@ -3,10 +3,11 @@
     vertical-align: baseline;
 }
 
-.que.selfassess .notrated {
-    width: 16px;
-    height: 16px;
-    margin-right: 0;
+.que.selfassess .clearrating {
+    padding: 1px;
+    font-size: 65%;
+    float: right;
+    margin: 0 0 5px 2px;
 }
 
 .que.selfassess .rated {
