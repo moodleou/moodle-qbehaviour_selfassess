@@ -1,6 +1,9 @@
 .que.selfassess .self-assess-comment label,
 .que.selfassess .self-assess-comment textarea {
     vertical-align: baseline;
+    /* For some reason, 100% comes out too wide. The 14px here matches the
+       right-padding on the container. */
+    max-width: calc(100% - 14px);
 }
 
 .que.selfassess .clearrating {
