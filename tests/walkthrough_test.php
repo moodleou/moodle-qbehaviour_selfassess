@@ -186,7 +186,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(2);
         $this->render();
         $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
-        $this->assertContains('Please record something.', $this->currentoutput);
+        $this->assertContains('Please record an answer to each part of the question.',
+                $this->currentoutput);
 
         // Submit all and finish even though not submission was made. Verify you can still self-grade.
         $this->finish();
