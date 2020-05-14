@@ -143,19 +143,15 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      * @throws coding_exception
      */
     protected function star_rating_select(question_attempt $qa, string $name, int $currentstars) {
-        $fieldset = "<fieldset class=\"rating invisiblefieldset\"><span class=\"stars\">";
+        $fieldset = "<fieldset class=\"rating invisiblefieldset\"><div class=\"stars\">";
         for ($i = 0; $i < self::MAX_NUMBER_OF_STARS + 1; $i++) {
             $rated = get_string('rated', 'qbehaviour_selfassess', $i);
-            if ($i == 0) {
-                // Add a button for clear rating after the stars to be displayed in the same line.
-                $fieldset .= "<span id=\"clearrating\" class=\"clearrating\">
-                        <input type=\"button\" name=\"clearbutton\" value=\"" . get_string('clear') . "\" /></span>";
-            } else {
+            if ($i > 0) {
                 $starempty = $this->pix_icon('starempty', $rated, 'qbehaviour_selfassess', ['class' => 'rated']);
                 $starfilled = $this->pix_icon('starfilled', $rated, 'qbehaviour_selfassess', ['class' => 'rated']);
                 $fieldset .= "<label for=\"$name-$i\">
-                        <span class=\"empty\">$starempty</span>
-                        <span class=\"filled\">$starfilled</span>
+                        <div class=\"empty\" tabindex=\"0\">$starempty</div>
+                        <div class=\"filled\" tabindex=\"0\">$starfilled</div>
                     </label>";
             }
             $checked = '';
@@ -164,7 +160,10 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
             }
             $fieldset .= "<input id=\"$name-$i\" type=\"radio\" name=\"$name\" $checked class=\"accesshide\" value=\"$i\">";
         }
-        $fieldset .= "</span></fieldset>";
+        // Add a button for clear rating after the stars to be displayed in the same line.
+        $fieldset .= "<div class=\"clearrating\">
+                        <input type=\"button\" name=\"clearbutton\" value=\"" . get_string('clear') . "\" /></div>";
+        $fieldset .= "</div></fieldset>";
         $this->page->requires->js_call_amd('qbehaviour_selfassess/rating', 'init',
                 [$qa->get_outer_question_div_unique_id()]);
         return $fieldset;

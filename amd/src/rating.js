@@ -21,7 +21,7 @@
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(function() {
+define(['core/key_codes'], function(keys) {
     /**
      * Rating object.
      * @param {Element} questionDiv
@@ -30,6 +30,26 @@ define(function() {
     function Rating(questionDiv) {
         let clearButton = questionDiv.querySelector('.rating .stars input[type=button]');
         clearButton.addEventListener('click', handleButtonClick);
+        clearButton.addEventListener('keydown', handleButtonKeyPress);
+
+        let radios = questionDiv.querySelectorAll('.rating .stars input[type=radio]');
+        let stars = questionDiv.querySelectorAll('.rating .stars label');
+        stars.forEach(function(star, index) {
+            star.addEventListener('keydown', function(e) {
+                switch (e.keyCode) {
+                    case keys.enter:
+                    case keys.space:
+                        e.preventDefault();
+                        // Using index+1, because the radio button starting from 0 and labels (stars) starting with 1.
+                        // Reverse the boolean value as a shortcat instead of an if-statement.
+                        radios[index + 1].checked = !radios[index + 1].checked;
+                        return;
+
+                    default:
+                        return;
+                }
+            });
+        });
 
         /**
          * Handles clicks on the clear button.
@@ -39,6 +59,26 @@ define(function() {
         function handleButtonClick(e) {
             e.preventDefault();
             clearRating(questionDiv);
+            clearButton.blur();
+        }
+
+        /**
+         * Handles keydown on the clear button.
+         *
+         * @param {KeyboardEvent} e
+         */
+        function handleButtonKeyPress(e) {
+            switch (e.keyCode) {
+                case keys.enter:
+                case keys.space:
+                    e.preventDefault();
+                    clearRating(questionDiv);
+                    clearButton.blur();
+                    return;
+
+                default:
+                    return;
+            }
         }
 
         /**
