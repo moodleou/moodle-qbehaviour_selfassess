@@ -1,9 +1,17 @@
 .que.selfassess .self-assess-comment label,
 .que.selfassess .self-assess-comment textarea {
-    vertical-align: baseline;
     /* For some reason, 100% comes out too wide. The 14px here matches the
        right-padding on the container. */
     max-width: calc(100% - 14px);
+
+    /* We would like this to say baseline, and have the first line of text in the textarea
+       line up with the lable. That works in Firefox, but not Chrome. Hence we do this. */
+    vertical-align: top;
+}
+.que.selfassess .self-assess-comment label {
+    /* Our normal line-height is 17px. A text area has 1px border + 4px padding, so
+       we need an extra 5px padding top and bottom, giving 27.*/
+    line-height: 27px;
 }
 
 .que.selfassess .clearrating {
