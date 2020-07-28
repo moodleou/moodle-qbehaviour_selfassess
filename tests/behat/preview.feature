@@ -28,18 +28,35 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     Given the following config values are set as admin:
       | behaviour | immediatefeedback | question_preview |
       | history   | shown             | question_preview |
-    When I choose "Preview" action for "Record audio question" in the question bank
+    And I choose "Preview" action for "Record audio question" in the question bank
     And I switch to "questionpreview" window
-    Then I should see "Please record yourself talking about Moodle."
-    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
-    And I press "Check"
-    Then I should see "Submit: File recording.ogg"
+    And I should see "Please record yourself talking about Moodle."
+    When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And I press "Save and reveal feedback"
+    Then I should see "I hope you spoke clearly and coherently."
+    And I should see "Submit: File recording.ogg"
     And I click on "Rated 2 stars" "icon"
     And I press "Save"
-    Then I should see "Self-assessed 2 stars with no comment"
+    And I should see "Self-assessed 2 stars with no comment"
     And I click on "Rated 5 stars" "icon"
     And I set the following fields to these values:
       | Comment       | Seems OK to me. |
     And I press "Save"
-    Then I should see "Self-assessed 5 stars with comment: Seems OK to me."
+    And I should see "Self-assessed 5 stars with comment: Seems OK to me."
     And I switch to the main window
+
+  Scenario: Preview a question with max mark 0. No comment UI. Just the feedback.
+    Given I choose "Preview" action for "Record audio question" in the question bank
+    And I switch to "questionpreview" window
+    And I set the following fields to these values:
+      | How questions behave | Immediate feedback |
+      | Marked out of        | 0                  |
+      | Response history     | Shown              |
+    And I press "Start again with these options"
+    When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And I press "Save and reveal feedback"
+    Then I should see "I hope you spoke clearly and coherently."
+    And I should see "Submit: File recording.ogg"
+    And I should not see "Rating"
+    And I should not see "Comment"
+    And "Save" "button" should not exist

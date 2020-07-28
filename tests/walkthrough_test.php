@@ -77,9 +77,6 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(4);
         $this->check_step_count(3);
-        $this->check_current_state(question_state::$manfinished);
-        $this->check_current_mark(4);
-        $this->check_step_count(3);
         $this->render();
         $this->assertContains('<fieldset class="rating invisiblefieldset"><div class="stars">', $this->currentoutput);
         $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
@@ -186,7 +183,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(2);
         $this->render();
         $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
-        $this->assertContains('Please record an answer to each part of the question.',
+        $this->assertContains('Please complete your answer.',
                 $this->currentoutput);
 
         // Submit all and finish even though not submission was made. Verify you can still self-grade.
@@ -212,5 +209,43 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->assertContains('checked="checked" class="accesshide" value="4">', $this->currentoutput);
         $this->assertEquals('Self-assessed 4 stars with no comment',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
+    }
+
+    public function test_selfassess_max_mark_zero_then_no_rating() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/'); // Required to output a text editor without errors.
+
+        // Create a recordrtc question in the DB.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'interactive', 0);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+        $this->assertNotContains('<fieldset class="rating', $this->currentoutput);
+
+        // Process a response and check the expected result.
+        $response = $this->store_submission_file('moodle-tim.ogg');
+        $response['-submit'] = '1';
+        $this->process_submission($response);
+
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        $this->assertNotContains('<fieldset class="rating invisiblefieldset"><div class="stars">', $this->currentoutput);
+        $this->assertNotContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertNotContains('checked="checked" class="accesshide" value="0">', $this->currentoutput);
+        $this->assertNotContains('value="Save"', $this->currentoutput);
     }
 }

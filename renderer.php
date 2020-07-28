@@ -37,11 +37,22 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
     const MAX_NUMBER_OF_STARS = 5;
 
     public function controls(question_attempt $qa, question_display_options $options) {
-        return $this->submit_button($qa, $options);
+        $output = $this->submit_button($qa, $options);
+
+        // Bit of a hack to get the core button, with all the required setup, but just change the label.
+        $output = str_replace(html_writer::attribute('value', get_string('check', 'question')),
+                html_writer::attribute('value', get_string('saveandfeedback', 'qbehaviour_selfassess')), $output);
+
+        return $output;
     }
 
     public function feedback(question_attempt $qa, question_display_options $options) {
         if (!$qa->get_state()->is_finished()) {
+            return '';
+        }
+
+        if ($qa->get_max_mark() == 0) {
+            // No self-assessment if the max mark is 0. We just show the feedback.
             return '';
         }
 
