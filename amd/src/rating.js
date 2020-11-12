@@ -28,12 +28,12 @@ define(['core/key_codes'], function(keys) {
      * @constructor
      */
     function Rating(questionDiv) {
-        let clearButton = questionDiv.querySelector('.rating .stars input[type=button]');
+        let clearButton = questionDiv.querySelector('.self-assessment-rating input.clearrating');
         clearButton.addEventListener('click', handleButtonClick);
         clearButton.addEventListener('keydown', handleButtonKeyPress);
 
-        let radios = questionDiv.querySelectorAll('.rating .stars input[type=radio]');
-        let stars = questionDiv.querySelectorAll('.rating .stars label');
+        let radios = questionDiv.querySelectorAll('.self-assessment-rating input[type=radio]');
+        let stars = questionDiv.querySelectorAll('.self-assessment-rating label');
         stars.forEach(function(star, index) {
             star.addEventListener('keydown', function(e) {
                 switch (e.keyCode) {
@@ -87,7 +87,7 @@ define(['core/key_codes'], function(keys) {
          * @param {Element} questionDiv
          */
         function clearRating(questionDiv) {
-            let radios = questionDiv.querySelectorAll('.rating .stars input[type=radio]');
+            let radios = questionDiv.querySelectorAll('.self-assessment-rating input[type=radio]');
             radios.forEach(function(radio, index) {
                 if (index === 0) {
                     radio.checked = true;

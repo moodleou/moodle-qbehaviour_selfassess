@@ -1,3 +1,6 @@
+.que.selfassess .self-assess-comment {
+    margin-top: 4px;
+}
 .que.selfassess .self-assess-comment label,
 .que.selfassess .self-assess-comment textarea {
     /* For some reason, 100% comes out too wide. The 14px here matches the
@@ -15,10 +18,8 @@
 }
 
 .que.selfassess .clearrating {
-    padding: 1px;
-    font-size: 65%;
-    float: right;
-    margin: 0 0 5px 2px;
+    padding: 2px 8px;
+    font-size: 0.85714em;
 }
 
 .que.selfassess .rated {
@@ -27,7 +28,7 @@
     margin-right: 0;
 }
 
-.que.selfassess .stars label {
+.que.selfassess .rating label {
     cursor: pointer;
 }
 
