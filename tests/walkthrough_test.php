@@ -37,14 +37,14 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
     /**
      * Assertion to verify that the star rating UI is not present in $this->currentoutput.
      */
-    protected function assertDoesNotContainStarRatingUi(): void {
+    protected function assert_does_not_contain_star_rating_ui(): void {
         $this->assertNotContains('<div class="self-assessment-rating"', $this->currentoutput);
     }
 
     /**
      * Assertion to verify that the star rating UI is present in $this->currentoutput.
      */
-    protected function assertContainsStarRatingUi(): void {
+    protected function assert_contains_star_rating_ui(): void {
         $this->assertContains('<div class="self-assessment-rating"', $this->currentoutput);
         $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
     }
@@ -54,7 +54,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
      *
      * @param int $rating the rating that should be selected.
      */
-    protected function assertSelectedRatingIs(int $rating): void {
+    protected function assert_selected_rating_is(int $rating): void {
         $this->assertContains('checked="checked" class="accesshide" value="' . $rating . '">',
                 $this->currentoutput);
     }
@@ -79,7 +79,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -90,8 +90,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(0);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(0);
 
         // Now self-assess.
         $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
@@ -101,8 +101,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(4);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(4);
         $this->assertEquals('Self-assessed 4 stars with comment: Sounds OK',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
@@ -136,7 +136,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -147,8 +147,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(0);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(0);
 
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
@@ -157,8 +157,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(4);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(4);
         $this->assertEquals('Self-assessed 4 stars with no comment',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
@@ -191,7 +191,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
 
         // Try to submit a blank response, and check it is rejected.
         $response = $this->setup_empty_submission_fileares();
@@ -202,7 +202,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
         $this->assertContains('Please complete your answer.',
                 $this->currentoutput);
 
@@ -213,8 +213,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(3);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(0);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(0);
 
         // Now self-assess.
         $this->process_submission(['-stars' => '4', '-rate' => '1']);
@@ -223,8 +223,8 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(4);
         $this->check_step_count(4);
         $this->render();
-        $this->assertContainsStarRatingUi();
-        $this->assertSelectedRatingIs(4);
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(4);
         $this->assertEquals('Self-assessed 4 stars with no comment',
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
     }
@@ -250,7 +250,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(1);
         $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
 
         // Process a response and check the expected result.
         $response = $this->store_submission_file('moodle-tim.ogg');
@@ -261,7 +261,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_current_mark(null);
         $this->check_step_count(2);
         $this->render();
-        $this->assertDoesNotContainStarRatingUi();
+        $this->assert_does_not_contain_star_rating_ui();
         $this->assertNotContains('value="Save"', $this->currentoutput);
     }
 }

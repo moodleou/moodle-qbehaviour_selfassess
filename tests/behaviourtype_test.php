@@ -39,10 +39,10 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  */
 class qbehaviour_selfassess_type_test extends basic_testcase {
 
-    /** @var qbehaviour_selfassess_type */
+    /** @var qbehaviour_selfassess_type the behaviour type */
     protected $behaviourtype;
 
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->behaviourtype = question_engine::get_behaviour_type('selfassess');
     }
