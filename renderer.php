@@ -36,7 +36,7 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      */
     const MAX_NUMBER_OF_STARS = 5;
 
-    public function controls(question_attempt $qa, question_display_options $options) {
+    public function controls(question_attempt $qa, question_display_options $options): string {
         $output = $this->submit_button($qa, $options);
 
         // Bit of a hack to get the core button, with all the required setup, but just change the label.
@@ -46,13 +46,8 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         return $output;
     }
 
-    public function feedback(question_attempt $qa, question_display_options $options) {
+    public function feedback(question_attempt $qa, question_display_options $options): string {
         if (!$qa->get_state()->is_finished()) {
-            return '';
-        }
-
-        if ($qa->get_max_mark() == 0) {
-            // No self-assessment if the max mark is 0. We just show the feedback.
             return '';
         }
 
@@ -69,15 +64,25 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         return $output;
     }
 
-    public function self_assessment_editable(question_attempt $qa, question_display_options $options) {
-        $stars = $qa->get_last_behaviour_var('stars');
-        $name = $qa->get_behaviour_field_name('stars');
-        $starratinghtml = $this->star_rating_select($qa, $name, (int) $stars);
+    /**
+     * Render the self-assessment UI.
+     *
+     * @param question_attempt $qa the question attempt being rendered.
+     * @param question_display_options $options the display options.
+     * @return string HTML.
+     */
+    public function self_assessment_editable(question_attempt $qa, question_display_options $options): string {
         $output = '';
-        $output .= html_writer::div(
-                html_writer::tag('label', get_string('rateyourself', 'qbehaviour_selfassess'), ['for' => $name]) .
-                ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') . ' ' .
-                html_writer::tag('span', $starratinghtml, ['class' => 'rating']), 'self-assessment-rating');
+
+        if ($qa->has_marks()) {
+            $stars = $qa->get_last_behaviour_var('stars');
+            $name = $qa->get_behaviour_field_name('stars');
+            $starratinghtml = $this->star_rating_select($qa, $name, (int) $stars);
+            $output .= html_writer::div(
+                    html_writer::tag('label', get_string('rateyourself', 'qbehaviour_selfassess'), ['for' => $name]) .
+                    ' ' . $this->help_icon('rateyourself', 'qbehaviour_selfassess') . ' ' .
+                    html_writer::tag('span', $starratinghtml, ['class' => 'rating']), 'self-assessment-rating');
+        }
 
         // Editor for the comment.
         list($comment) = $this->get_last_self_comment($qa);
@@ -104,13 +109,22 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         return $output;
     }
 
-    public function self_assessment_read_only(question_attempt $qa, question_display_options $options) {
+    /**
+     * Render a read-only view of the self-assessment UI.
+     *
+     * @param question_attempt $qa the question attempt being rendered.
+     * @param question_display_options $options the display options.
+     * @return string HTML.
+     */
+    public function self_assessment_read_only(question_attempt $qa, question_display_options $options): string {
         $output = '';
 
-        $stars = $qa->get_last_behaviour_var('stars');
-        $output .= html_writer::div(get_string('selfassessment', 'qbehaviour_selfassess',
-                str_repeat("\u{2605}", $stars) . str_repeat("\u{2606}", self::MAX_NUMBER_OF_STARS - $stars)),
-                'self-assessment');
+        if ($qa->has_marks()) {
+            $stars = $qa->get_last_behaviour_var('stars');
+            $output .= html_writer::div(get_string('selfassessment', 'qbehaviour_selfassess',
+                    str_repeat("\u{2605}", $stars) . str_repeat("\u{2606}", self::MAX_NUMBER_OF_STARS - $stars)),
+                    'self-assessment');
+        }
 
         list($comment, $commentformat) = $this->get_last_self_comment($qa);
         if ($comment !== null) {
@@ -128,7 +142,7 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      * @param question_attempt $qa the attempt to get the comment from.
      * @return array comment and format, or null, null if there is not comment.
      */
-    protected function get_last_self_comment(question_attempt $qa) {
+    protected function get_last_self_comment(question_attempt $qa): array {
         $comment = [null, null];
         foreach ($qa->get_reverse_step_iterator() as $step) {
             if ($step->has_behaviour_var('selfcomment')) {
@@ -149,12 +163,11 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      * Return HTML structure (hidden radio button input fields labeled with appropriate icons as rating stars).
      *
      * @param question_attempt $qa the attempt to get star rating.
-     * @param string $name , unique name for the question on the page
-     * @param int $currentstars , last/current rating number
-     * @return string, html structure
-     * @throws coding_exception
+     * @param string $name unique name for the question on the page
+     * @param int $currentstars last/current rating number
+     * @return string html structure
      */
-    protected function star_rating_select(question_attempt $qa, string $name, int $currentstars) {
+    protected function star_rating_select(question_attempt $qa, string $name, int $currentstars): string {
         $output = '';
         for ($i = 0; $i < self::MAX_NUMBER_OF_STARS + 1; $i++) {
             $rated = get_string('rated', 'qbehaviour_selfassess', $i);

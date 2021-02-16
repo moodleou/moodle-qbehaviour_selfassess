@@ -70,7 +70,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             return $this->process_submit($pendingstep);
         } else if ($pendingstep->has_behaviour_var('finish')) {
             return $this->process_finish($pendingstep);
-        } else if ($pendingstep->has_behaviour_var('rate')) {
+        } else if ($pendingstep->has_behaviour_var('selfcomment')) {
             return $this->process_self_assess($pendingstep);
         } else if ($pendingstep->has_behaviour_var('comment')) {
             return $this->process_comment($pendingstep);
@@ -121,8 +121,8 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             throw new coding_exception('Cannot self-assess a question before it is finished.');
         }
 
-        if (!$pendingstep->has_behaviour_var('stars')) {
-            throw new coding_exception('Cannot self-assess a question without a star rating.');
+        if (!$pendingstep->has_behaviour_var('selfcomment')) {
+            throw new coding_exception('Cannot self-assess a question without a comment.');
         }
 
         if ($this->is_same_self_assessment($pendingstep)) {
@@ -130,10 +130,12 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         }
 
         $stars = $pendingstep->get_behaviour_var('stars');
-        if ($stars < 0 || $stars > 5) {
-            throw new coding_exception('Number of stars must be between 0 and 5 inclusive.');
+        if ($stars !== null) {
+            if ($stars < 0 || $stars > 5) {
+                throw new coding_exception('Number of stars must be between 0 and 5 inclusive.');
+            }
+            $pendingstep->set_fraction($stars / 5);
         }
-        $pendingstep->set_fraction($stars / 5);
         $pendingstep->set_state(question_state::$manfinished);
         return question_attempt::KEEP;
     }
@@ -195,15 +197,19 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
      * @return string a summary of the action performed.
      */
     protected function summarise_self_assess(question_attempt_step $step): string {
-        $a = new stdClass();
-        $a->stars = $step->get_behaviour_var('stars');
-
+        $stars = $step->get_behaviour_var('stars');
         $comment = $step->get_behaviour_var('selfcomment');
-        if ($comment === null || $comment === '') {
+
+        $a = new stdClass();
+        $a->stars = $stars;
+        $a->comment = shorten_text($comment, 200);
+
+        if ($comment !== null && $comment !== '' && $stars !== null) {
+            return get_string('selfassessedwithcomment', 'qbehaviour_selfassess', $a);
+        } else if ($stars !== null) {
             return get_string('selfassessed', 'qbehaviour_selfassess', $a);
         } else {
-            $a->comment = shorten_text($comment, 200);
-            return get_string('selfassessedwithcomment', 'qbehaviour_selfassess', $a);
+            return get_string('selfcommented', 'qbehaviour_selfassess', $a);
         }
     }
 }

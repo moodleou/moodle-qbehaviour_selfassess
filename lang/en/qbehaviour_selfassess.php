@@ -32,3 +32,4 @@ $string['saveandfeedback'] = 'Save and reveal feedback';
 $string['selfassessed'] = 'Self-assessed {$a->stars} stars with no comment';
 $string['selfassessedwithcomment'] = 'Self-assessed {$a->stars} stars with comment: {$a->comment}';
 $string['selfassessment'] = 'Self-assessment: {$a}';
+$string['selfcommented'] = 'Commented: {$a->comment}';

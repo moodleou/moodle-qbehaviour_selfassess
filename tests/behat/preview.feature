@@ -45,7 +45,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I should see "Self-assessed 5 stars with comment: Seems OK to me."
     And I switch to the main window
 
-  Scenario: Preview a question with max mark 0. No comment UI. Just the feedback.
+  Scenario: Preview a question with max mark 0. Just comment UI, no ratings.
     Given I choose "Preview" action for "Record audio question" in the question bank
     And I switch to "questionpreview" window
     And I set the following fields to these values:
@@ -58,5 +58,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     Then I should see "I hope you spoke clearly and coherently."
     And I should see "Submit: File recording.ogg"
     And I should not see "Rating"
-    And I should not see "Comment"
-    And "Save" "button" should not exist
+    And I set the following fields to these values:
+      | Comment       | Seems OK to me. |
+    And I press "Save"
+    And I should see "Commented: Seems OK to me."
