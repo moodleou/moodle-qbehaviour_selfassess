@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020121700;
+$plugin->version   = 2021081000;
 $plugin->requires  = 2020061500;
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->component = 'qbehaviour_selfassess';
-$plugin->release   = 'v1.1 for Moodle 3.9+';
+$plugin->release   = 'v1.2 for Moodle 3.9+';
 
 $plugin->outestssufficient = true;

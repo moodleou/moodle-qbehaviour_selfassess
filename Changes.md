@@ -1,8 +1,14 @@
 # Change log for the Self-assessment question behaviour
 
+## Changes in 1.2
+
+* Now, if the question is marked out of 0, then there is just a comment box, just no ratings.
+* Button text was simplified from 'Save and reveal feedback' to just 'Save'.
+
+
 ## Changes in 1.1
 
-* Now, if the question is marked out of 0, then there is just a comment box, no ratings.
+* Now, if the question is marked out of 0, then there is no comment box or ratings.
 * Layout of star ratings improved.
 
 
