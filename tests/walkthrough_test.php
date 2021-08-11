@@ -38,15 +38,15 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
      * Assertion to verify that the star rating UI is not present in $this->currentoutput.
      */
     protected function assert_does_not_contain_star_rating_ui(): void {
-        $this->assertNotContains('<div class="self-assessment-rating"', $this->currentoutput);
+        $this->assertStringNotContainsString('<div class="self-assessment-rating"', $this->currentoutput);
     }
 
     /**
      * Assertion to verify that the star rating UI is present in $this->currentoutput.
      */
     protected function assert_contains_star_rating_ui(): void {
-        $this->assertContains('<div class="self-assessment-rating"', $this->currentoutput);
-        $this->assertContains('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
+        $this->assertStringContainsString('<div class="self-assessment-rating"', $this->currentoutput);
+        $this->assertStringContainsString('<img class="icon rated" alt="Rated 5 stars" ', $this->currentoutput);
     }
 
     /**
@@ -55,7 +55,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
      * @param int $rating the rating that should be selected.
      */
     protected function assert_selected_rating_is(int $rating): void {
-        $this->assertContains('checked="checked" class="accesshide" value="' . $rating . '">',
+        $this->assertStringContainsString('checked="checked" class="accesshide" value="' . $rating . '">',
                 $this->currentoutput);
     }
 
@@ -206,7 +206,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $this->check_step_count(2);
         $this->render();
         $this->assert_does_not_contain_star_rating_ui();
-        $this->assertContains('Please complete your answer.',
+        $this->assertStringContainsString('Please complete your answer.',
                 $this->currentoutput);
 
         // Submit all and finish even though not submission was made. Verify you can still self-grade.

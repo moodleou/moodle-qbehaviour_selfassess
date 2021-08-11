@@ -32,7 +32,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I switch to "questionpreview" window
     And I should see "Please record yourself talking about Moodle."
     When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
-    And I press "Save and reveal feedback"
+    And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
     And I should see "Submit: File recording.ogg"
     And I click on "Rated 2 stars" "icon"
@@ -54,7 +54,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
       | Response history     | Shown              |
     And I press "Start again with these options"
     When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
-    And I press "Save and reveal feedback"
+    And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
     And I should see "Submit: File recording.ogg"
     And I should not see "Rating"
