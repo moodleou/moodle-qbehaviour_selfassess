@@ -14,20 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbehaviour_selfassess\privacy;
+
 /**
- * Privacy Subsystem implementation for qbehaviour_selfassess.
+ * Privacy Subsystem for qbehaviour_selfassess implementing null_provider.
  *
  * @package   qbehaviour_selfassess
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace qbehaviour_selfassess\privacy;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Privacy Subsystem for qbehaviour_selfassess implementing null_provider.
  */
 class provider implements \core_privacy\local\metadata\null_provider {
 

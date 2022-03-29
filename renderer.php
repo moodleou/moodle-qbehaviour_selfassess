@@ -15,18 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the renderer for the self-assessment behaviour.
+ * Renderer for outputting parts of a question belonging to the self-assessment behaviour.
  *
  * @package    qbehaviour_selfassess
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Renderer for outputting parts of a question belonging to the self-assessment behaviour.
  */
 class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
 
@@ -51,8 +44,7 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
             return '';
         }
 
-        $output = '';
-        $output .= html_writer::start_div('self-assessment');
+        $output = html_writer::start_div('self-assessment');
 
         if ($options->readonly === qbehaviour_selfassess::READONLY_EXCEPT_SELFASSESS) {
             $output .= $this->self_assessment_editable($qa, $options);

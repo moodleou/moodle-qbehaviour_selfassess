@@ -1,5 +1,10 @@
 # Change log for the Self-assessment question behaviour
 
+## Changes in 1.3
+
+* This version works with Moodle 4.0.
+
+
 ## Changes in 1.2
 
 * Now, if the question is marked out of 0, then there is just a comment box, just no ratings.

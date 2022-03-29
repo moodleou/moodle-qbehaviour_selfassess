@@ -20,18 +20,14 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And the following "questions" exist:
       | questioncategory | qtype     | name                  | template |
       | Test questions   | recordrtc | Record audio question | audio    |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
 
   Scenario: Preview a question and try to submit a response with rating/comment.
     Given the following config values are set as admin:
       | behaviour | immediatefeedback | question_preview |
       | history   | shown             | question_preview |
-    And I choose "Preview" action for "Record audio question" in the question bank
-    And I switch to "questionpreview" window
+    When I am on the "Record audio question" "core_question > preview" page logged in as teacher
     And I should see "Please record yourself talking about Moodle."
-    When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
     And I should see "Submit: File recording.ogg"
@@ -46,14 +42,13 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I switch to the main window
 
   Scenario: Preview a question with max mark 0. Just comment UI, no ratings.
-    Given I choose "Preview" action for "Record audio question" in the question bank
-    And I switch to "questionpreview" window
+    When I am on the "Record audio question" "core_question > preview" page logged in as teacher
     And I set the following fields to these values:
       | How questions behave | Immediate feedback |
       | Marked out of        | 0                  |
       | Response history     | Shown              |
     And I press "Start again with these options"
-    When "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
     And I should see "Submit: File recording.ogg"

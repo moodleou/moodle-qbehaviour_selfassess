@@ -17,30 +17,23 @@
 /**
  * Question behaviour for students to self-assess their work.
  *
+ * The student enters their response during the attempt, and it is saved. Later,
+ * when the whole attempt is finished, the attempt goes into the NEEDS_GRADING
+ * state, and the teacher must grade it manually.
+ *
  * @package    qbehaviour_selfassess
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Question behaviour for students to self-assess their work.
- *
- * The student enters their response during the attempt, and it is saved. Later,
- * when the whole attempt is finished, the attempt goes into the NEEDS_GRADING
- * state, and the teacher must grade it manually.
- */
 class qbehaviour_selfassess extends question_behaviour_with_save {
+    /** @var int special value for $options->readonly for when in the self-assess state. */
     const READONLY_EXCEPT_SELFASSESS = 0x10;
 
-    public function is_compatible_question(question_definition $question) {
+    public function is_compatible_question(question_definition $question): bool {
         return $question instanceof question_with_responses;
     }
 
-    public function adjust_display_options(question_display_options $options) {
+    public function adjust_display_options(question_display_options $options): void {
         global $USER;
         $originalreadonly = $options->readonly;
         parent::adjust_display_options($options);
@@ -51,7 +44,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         }
     }
 
-    public function get_expected_data() {
+    public function get_expected_data(): array {
         $expecteddata = parent::get_expected_data();
 
         if (!$this->qa->get_state()->is_finished()) {
@@ -65,7 +58,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         return $expecteddata;
     }
 
-    public function process_action(question_attempt_pending_step $pendingstep) {
+    public function process_action(question_attempt_pending_step $pendingstep): bool {
         if ($pendingstep->has_behaviour_var('submit')) {
             return $this->process_submit($pendingstep);
         } else if ($pendingstep->has_behaviour_var('finish')) {
@@ -79,7 +72,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         }
     }
 
-    public function process_save(question_attempt_pending_step $pendingstep) {
+    public function process_save(question_attempt_pending_step $pendingstep): bool {
         $status = parent::process_save($pendingstep);
         if ($status == question_attempt::KEEP &&
                 $pendingstep->get_state() == question_state::$complete) {
@@ -88,7 +81,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         return $status;
     }
 
-    public function process_submit(question_attempt_pending_step $pendingstep) {
+    public function process_submit(question_attempt_pending_step $pendingstep): bool {
         if ($this->qa->get_state()->is_finished()) {
             return question_attempt::DISCARD;
         }
@@ -101,7 +94,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         return $this->process_finish($pendingstep);
     }
 
-    public function process_finish(question_attempt_pending_step $pendingstep) {
+    public function process_finish(question_attempt_pending_step $pendingstep): bool {
         if ($this->qa->get_state()->is_finished()) {
             return question_attempt::DISCARD;
         }
@@ -116,7 +109,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         return question_attempt::KEEP;
     }
 
-    public function process_self_assess(question_attempt_pending_step $pendingstep) {
+    public function process_self_assess(question_attempt_pending_step $pendingstep): bool {
         if (!$this->qa->get_state()->is_finished()) {
             throw new coding_exception('Cannot self-assess a question before it is finished.');
         }
@@ -148,7 +141,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
      * @param question_attempt_step $pendingstep contains the new responses.
      * @return bool whether the new assessment is the same as we already have.
      */
-    protected function is_same_self_assessment($pendingstep) {
+    protected function is_same_self_assessment(question_attempt_step $pendingstep): bool {
         $previouscomment = $this->qa->get_last_behaviour_var('selfcomment');
         $newcomment = $pendingstep->get_behaviour_var('selfcomment');
 

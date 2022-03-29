@@ -15,21 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question behaviour type for the self-assessment behaviour.
+ * Question behaviour type information for self-assessment behaviour.
  *
  * @package    qbehaviour_selfassess
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Question behaviour type information for self-assessment behaviour.
- */
 class qbehaviour_selfassess_type extends question_behaviour_type {
-    public function can_questions_finish_during_the_attempt() {
+    public function can_questions_finish_during_the_attempt(): bool {
         return true;
     }
 }

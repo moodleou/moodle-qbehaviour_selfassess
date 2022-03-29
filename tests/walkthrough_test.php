@@ -14,17 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the self-assessment behaviour.
- *
- * @package    qbehaviour_selfassess
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_selfassess;
+
+use question_bank;
+use question_state;
+use qtype_recordrtc_test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
 require_once(__DIR__ . '/../../../engine/lib.php');
 require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 require_once(__DIR__ . '/../../../type/recordrtc/tests/walkthrough_test.php');
@@ -32,8 +29,52 @@ require_once(__DIR__ . '/../../../type/recordrtc/tests/walkthrough_test.php');
 
 /**
  * Unit tests for the self-assessment question behaviour.
+ *
+ * @package    qbehaviour_selfassess
+ * @copyright  2020 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthrough_testcase {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+
+    /**
+     * Helper to get the qa of the qusetion being attempted.
+     *
+     * @return \question_attempt
+     */
+    protected function get_qa(): \question_attempt {
+        return $this->quba->get_question_attempt($this->slot);
+    }
+
+    /**
+     * Prepares the data (draft file) to simulate a user submitting a given fixture file.
+     *
+     * @param string $fixturefile name of the file to submit.
+     * @param string $filename filename to submit the file under.
+     * @return array response data that would need to be passed to $this->process_submission().
+     */
+    protected function store_submission_file(
+            string $fixturefile, string $filename = 'recording.ogg'): array {
+        $response = $this->setup_empty_submission_fileares();
+        qtype_recordrtc_test_helper::clear_draft_area($response['recording']);
+        qtype_recordrtc_test_helper::add_recording_to_draft_area(
+                $response['recording'], $fixturefile, $filename);
+        return $response;
+    }
+
+    /**
+     * Prepares the data (draft file) but with no files in it.
+     *
+     * @return array response data that would need to be passed to $this->process_submission().
+     */
+    protected function setup_empty_submission_fileares(): array {
+        $this->render();
+        if (!preg_match('/name="' . preg_quote($this->get_qa()->get_qt_field_name('recording')) .
+                '" value="(\d+)"/', $this->currentoutput, $matches)) {
+            throw new \coding_exception('Draft item id not found.');
+        }
+        return ['recording' => $matches[1]];
+    }
+
     /**
      * Assertion to verify that the star rating UI is not present in $this->currentoutput.
      */
@@ -67,6 +108,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $PAGE->set_url('/'); // Required to output a text editor without errors.
 
         // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
         $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
@@ -124,6 +166,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $PAGE->set_url('/'); // Required to output a text editor without errors.
 
         // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
         $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
@@ -181,6 +224,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $PAGE->set_url('/'); // Required to output a text editor without errors.
 
         // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
         $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
@@ -241,6 +285,7 @@ class qbehaviour_selfassess_walkthrough_testcase extends qtype_recordrtc_walkthr
         $PAGE->set_url('/'); // Required to output a text editor without errors.
 
         // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
         $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
