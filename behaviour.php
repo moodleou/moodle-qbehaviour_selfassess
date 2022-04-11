@@ -52,7 +52,6 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
         } else {
             $expecteddata['stars'] = PARAM_INT;
             $expecteddata['selfcomment'] = PARAM_RAW;
-            $expecteddata['selfcommentformat'] = PARAM_INT;
             $expecteddata['rate'] = PARAM_BOOL;
         }
         return $expecteddata;
@@ -63,10 +62,11 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             return $this->process_submit($pendingstep);
         } else if ($pendingstep->has_behaviour_var('finish')) {
             return $this->process_finish($pendingstep);
-        } else if ($pendingstep->has_behaviour_var('selfcomment')) {
-            return $this->process_self_assess($pendingstep);
         } else if ($pendingstep->has_behaviour_var('comment')) {
             return $this->process_comment($pendingstep);
+        } else if ($this->qa->get_state()->is_finished()) {
+            // Once we have finished, any action should be treated as a potential save.
+            return $this->process_self_assess($pendingstep);
         } else {
             return $this->process_save($pendingstep);
         }
@@ -122,6 +122,12 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             return question_attempt::DISCARD;
         }
 
+        if (!$pendingstep->has_behaviour_var('rate')) {
+            // If the student did not click the button, then add a variable
+            // so we can easily identify later that this was a self-rate.
+            $pendingstep->set_behaviour_var('_rate', 1);
+        }
+
         $stars = $pendingstep->get_behaviour_var('stars');
         if ($stars !== null) {
             if ($stars < 0 || $stars > 5) {
@@ -142,31 +148,20 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
      * @return bool whether the new assessment is the same as we already have.
      */
     protected function is_same_self_assessment(question_attempt_step $pendingstep): bool {
-        $previouscomment = $this->qa->get_last_behaviour_var('selfcomment');
-        $newcomment = $pendingstep->get_behaviour_var('selfcomment');
+        // Get the previous comment, and the new one, treating missing values as an empty string.
+        $previouscomment = $this->qa->get_last_behaviour_var('selfcomment') ?? '';
+        $newcomment = $pendingstep->get_behaviour_var('selfcomment') ?? '';
 
-        // When the comment empty, $previouscomment is an empty string but $newcomment is null,
-        // therefore they are not equal to each other. That's why checking if
-        // $previouscomment != $newcomment is not sufficent.
-        if (($previouscomment != $newcomment) && !(is_null($previouscomment) && html_is_blank($newcomment))) {
+        if ($previouscomment != $newcomment) {
             // The comment has changed.
             return false;
-        }
-
-        if (!html_is_blank($newcomment)) {
-            // Check comment format.
-            $previouscommentformat = $this->qa->get_last_behaviour_var('selfcommentformat');
-            $newcommentformat = $pendingstep->get_behaviour_var('selfcommentformat');
-            if ($previouscommentformat != $newcommentformat) {
-                return false;
-            }
         }
 
         // So, now we know the comment is the same, so check the mark, if present.
         $previousstars = $this->qa->get_last_behaviour_var('stars');
         $newstars = $pendingstep->get_behaviour_var('stars');
 
-        return (string) $previousstars === (string) $newstars;
+        return (int) $previousstars === (int) $newstars;
     }
 
     public function summarise_action(question_attempt_step $step) {
@@ -174,10 +169,10 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             return $this->summarise_submit($step);
         } else if ($step->has_behaviour_var('finish')) {
             return $this->summarise_finish($step);
-        } else if ($step->has_behaviour_var('rate')) {
-            return $this->summarise_self_assess($step);
         } else if ($step->has_behaviour_var('comment')) {
             return $this->summarise_manual_comment($step);
+        } else if ($step->has_behaviour_var('rate') || $step->has_behaviour_var('_rate')) {
+            return $this->summarise_self_assess($step);
         } else {
             return $this->summarise_save($step);
         }

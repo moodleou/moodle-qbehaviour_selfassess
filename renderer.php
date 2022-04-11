@@ -132,14 +132,13 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      * Get the most recent self-comment (and format) if any.
      *
      * @param question_attempt $qa the attempt to get the comment from.
-     * @return array comment and format, or null, null if there is not comment.
+     * @return array comment and format, or null, null if there is no comment.
      */
     protected function get_last_self_comment(question_attempt $qa): array {
         $comment = [null, null];
         foreach ($qa->get_reverse_step_iterator() as $step) {
             if ($step->has_behaviour_var('selfcomment')) {
-                $comment = [$step->get_behaviour_var('selfcomment'),
-                        $step->get_behaviour_var('selfcommentformat')];
+                $comment = [$step->get_behaviour_var('selfcomment'), FORMAT_MOODLE];
                 break;
             }
         }

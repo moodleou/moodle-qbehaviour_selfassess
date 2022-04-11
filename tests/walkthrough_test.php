@@ -137,7 +137,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assert_selected_rating_is(0);
 
         // Now self-assess.
-        $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
+        $this->process_submission(['-selfcomment' => 'Sounds OK',
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
@@ -150,7 +150,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
         // Re-submitting the same self-assessment should not change the grade.
-        $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML,
+        $this->process_submission(['-selfcomment' => 'Sounds OK',
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
@@ -195,7 +195,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assert_selected_rating_is(0);
 
         // Now self-assess.
-        $this->process_submission(['-selfcomment' => '', '-selfcommentformat' => FORMAT_HTML,
+        $this->process_submission(['-selfcomment' => '',
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
@@ -208,7 +208,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
         // Re-submitting the same self-assessment should not change the grade.
-        $this->process_submission(['-selfcomment' => '', '-selfcommentformat' => FORMAT_HTML,
+        $this->process_submission(['-selfcomment' => '',
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
@@ -264,7 +264,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assert_selected_rating_is(0);
 
         // Now self-assess.
-        $this->process_submission(['-selfcomment' => '', '-selfcommentformat' => FORMAT_HTML,
+        $this->process_submission(['-selfcomment' => '',
                 '-stars' => '4', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
@@ -313,7 +313,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assert_does_not_contain_star_rating_ui();
 
         // Now self-assess.
-        $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML, '-rate' => '1']);
+        $this->process_submission(['-selfcomment' => 'Sounds OK', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
         $this->check_current_mark(null);
@@ -324,9 +324,80 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
 
         // Re-submitting the same self-assessment should not change the grade.
-        $this->process_submission(['-selfcomment' => 'Sounds OK', '-selfcommentformat' => FORMAT_HTML, '-rate' => '1']);
+        $this->process_submission(['-selfcomment' => 'Sounds OK', '-rate' => '1']);
 
         $this->check_current_state(question_state::$manfinished);
+        $this->check_step_count(3);
+    }
+
+    public function test_selfassess_without_clicking_button() {
+        // This test simulates what happens if the student inputs a rating and/or a comment,
+        // without clicking the 'Save' button, but instead just going to the next page of the quiz.
+        // That should be treatd as if they did click the button.
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/'); // Required to output a text editor without errors.
+
+        // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'interactive', 5);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+        $this->assert_does_not_contain_star_rating_ui();
+
+        // Process a response and check the expected result.
+        $response = $this->store_submission_file('moodle-tim.ogg');
+        $response['-submit'] = '1';
+        $this->process_submission($response);
+
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(0);
+
+        // Now simulate going to the next page of the quiz, without changing the self-assessment.
+        // This should not add a step.
+        $this->process_submission(['-selfcomment' => '', '-stars' => '0']);
+
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(0);
+
+        // Now simulate adding a rating and comment and going to the next page of the quiz.
+        // This should be saved with a sensible summary.
+        $this->process_submission(['-selfcomment' => 'Seems OK', '-stars' => '3']);
+
+        $this->check_current_state(question_state::$manfinished);
+        $this->check_current_mark(3);
+        $this->check_step_count(3);
+        $this->render();
+        $this->assert_contains_star_rating_ui();
+        $this->assert_selected_rating_is(3);
+        $this->assertEquals('Self-assessed 3 stars with comment: Seems OK',
+                $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
+
+        // Re-submitting the same self-assessment should not change the grade.
+        $this->process_submission(['-selfcomment' => 'Seems OK', '-stars' => '3']);
+
+        $this->check_current_state(question_state::$manfinished);
+        $this->check_current_mark(3);
         $this->check_step_count(3);
     }
 }
