@@ -114,10 +114,6 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             throw new coding_exception('Cannot self-assess a question before it is finished.');
         }
 
-        if (!$pendingstep->has_behaviour_var('selfcomment')) {
-            throw new coding_exception('Cannot self-assess a question without a comment.');
-        }
-
         if ($this->is_same_self_assessment($pendingstep)) {
             return question_attempt::DISCARD;
         }
@@ -135,6 +131,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
             }
             $pendingstep->set_fraction($stars / 5);
         }
+
         $pendingstep->set_state(question_state::$manfinished);
         return question_attempt::KEEP;
     }

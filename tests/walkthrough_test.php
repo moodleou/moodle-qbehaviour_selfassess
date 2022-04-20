@@ -111,7 +111,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'canselfrate' => 1, 'canselfcomment' => 1]);
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -169,7 +170,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'canselfrate' => 1, 'canselfcomment' => 1]);
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -227,7 +229,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'canselfrate' => 1, 'canselfcomment' => 1]);
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -277,7 +280,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_qa()->summarise_action($this->get_qa()->get_last_step()));
     }
 
-    public function test_selfassess_max_mark_zero_then_no_rating() {
+    public function test_selfassess_comment_no_rating() {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -288,11 +291,12 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'canselfrate' => 0, 'canselfcomment' => 1]);
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
-        $this->start_attempt_at_question($q, 'interactive', 0);
+        $this->start_attempt_at_question($q, 'interactive', 5);
 
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
@@ -344,7 +348,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('recordrtc', 'audio', ['category' => $cat->id]);
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'canselfrate' => 1, 'canselfcomment' => 1]);
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);

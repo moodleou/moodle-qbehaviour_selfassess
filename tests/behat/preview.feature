@@ -5,7 +5,10 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
   I need to assess my one response.
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | behaviour | immediatefeedback | question_preview |
+      | history   | shown             | question_preview |
+    And the following "users" exist:
       | username | firstname | lastname | email               |
       | teacher  | Mark      | Allright | teacher@example.com |
     And the following "courses" exist:
@@ -17,14 +20,11 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype     | name                  | template |
-      | Test questions   | recordrtc | Record audio question | audio    |
 
   Scenario: Preview a question and try to submit a response with rating/comment.
-    Given the following config values are set as admin:
-      | behaviour | immediatefeedback | question_preview |
-      | history   | shown             | question_preview |
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
+      | Test questions   | recordrtc | Record audio question | audio    | 1           | 1              |
     When I am on the "Record audio question" "core_question > preview" page logged in as teacher
     And I should see "Please record yourself talking about Moodle."
     And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
@@ -39,15 +39,12 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
       | Comment       | Seems OK to me. |
     And I press "Save"
     And I should see "Self-assessed 5 stars with comment: Seems OK to me."
-    And I switch to the main window
 
-  Scenario: Preview a question with max mark 0. Just comment UI, no ratings.
+  Scenario: Preview a question with just comment UI, no ratings.
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
+      | Test questions   | recordrtc | Record audio question | audio    | 0           | 1              |
     When I am on the "Record audio question" "core_question > preview" page logged in as teacher
-    And I set the following fields to these values:
-      | How questions behave | Immediate feedback |
-      | Marked out of        | 0                  |
-      | Response history     | Shown              |
-    And I press "Start again with these options"
     And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
@@ -57,3 +54,30 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
       | Comment       | Seems OK to me. |
     And I press "Save"
     And I should see "Commented: Seems OK to me."
+
+  Scenario: Preview a question with just rating, no comment.
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
+      | Test questions   | recordrtc | Record audio question | audio    | 1           | 0              |
+    When I am on the "Record audio question" "core_question > preview" page logged in as teacher
+    And I should see "Please record yourself talking about Moodle."
+    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And I press "Save"
+    Then I should see "I hope you spoke clearly and coherently."
+    And I should not see "Comment"
+    And I should see "Submit: File recording.ogg"
+    And I click on "Rated 2 stars" "icon"
+    And I press "Save"
+    And I should see "Self-assessed 2 stars with no comment"
+
+  Scenario: Preview a question with neither comment nor rating.
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
+      | Test questions   | recordrtc | Record audio question | audio    | 0           | 0              |
+    When I am on the "Record audio question" "core_question > preview" page logged in as teacher
+    And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
+    And I press "Save"
+    Then I should see "I hope you spoke clearly and coherently."
+    And I should not see "Rating"
+    And I should not see "Comment"
+    And I should see "Submit: File recording.ogg"

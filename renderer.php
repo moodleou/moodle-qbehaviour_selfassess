@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use qbehaviour_selfassess\question_with_self_assessment;
+
 /**
  * Renderer for outputting parts of a question belonging to the self-assessment behaviour.
  *
@@ -65,8 +67,10 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      */
     public function self_assessment_editable(question_attempt $qa, question_display_options $options): string {
         $output = '';
+        /** @var question_with_self_assessment $question */
+        $question = $qa->get_question();
 
-        if ($qa->has_marks()) {
+        if ($question->canselfrate) {
             $stars = $qa->get_last_behaviour_var('stars');
             $name = $qa->get_behaviour_field_name('stars');
             $starratinghtml = $this->star_rating_select($qa, $name, (int) $stars);
@@ -77,27 +81,32 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
         }
 
         // Editor for the comment.
-        list($comment) = $this->get_last_self_comment($qa);
-        $inputname = $qa->get_behaviour_field_name('selfcomment');
+        if ($question->canselfcomment) {
+            list($comment) = $this->get_last_self_comment($qa);
+            $inputname = $qa->get_behaviour_field_name('selfcomment');
 
-        $output .= html_writer::div(
-                html_writer::tag('label', get_string('comment', 'question'), ['for' => $inputname]) .
-                ' ' . html_writer::tag('textarea', s($comment),
-                        ['id' => $inputname, 'name' => $inputname, 'rows' => 2, 'cols' => 60]),
-                'self-assess-comment');
+            $output .= html_writer::div(
+                    html_writer::tag('label', get_string('comment', 'question'), ['for' => $inputname]) .
+                    ' ' . html_writer::tag('textarea', s($comment),
+                            ['id' => $inputname, 'name' => $inputname, 'rows' => 2, 'cols' => 60]),
+                    'self-assess-comment');
+        }
 
-        // Save button.
-        $attributes = [
-            'type' => 'submit',
-            'id' => $qa->get_behaviour_field_name('Save'),
-            'name' => $qa->get_behaviour_field_name('rate'),
-            'value' => get_string('save'),
-            'class' => 'submit btn btn-secondary',
-        ];
-        $output .= html_writer::empty_tag('input', $attributes);
+        if ($question->canselfrate || $question->canselfcomment) {
+            // Save button.
+            $attributes = [
+                'type' => 'submit',
+                'id' => $qa->get_behaviour_field_name('Save'),
+                'name' => $qa->get_behaviour_field_name('rate'),
+                'value' => get_string('save'),
+                'class' => 'submit btn btn-secondary',
+            ];
+            $output .= html_writer::empty_tag('input', $attributes);
 
-        $this->page->requires->js_init_call('M.core_question_engine.init_submit_button',
-                array($attributes['id'], $qa->get_slot()));
+            $this->page->requires->js_init_call('M.core_question_engine.init_submit_button',
+                    array($attributes['id'], $qa->get_slot()));
+        }
+
         return $output;
     }
 
@@ -110,19 +119,23 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
      */
     public function self_assessment_read_only(question_attempt $qa, question_display_options $options): string {
         $output = '';
+        /** @var question_with_self_assessment $question */
+        $question = $qa->get_question();
 
-        if ($qa->has_marks()) {
+        if ($question->canselfrate) {
             $stars = $qa->get_last_behaviour_var('stars');
             $output .= html_writer::div(get_string('selfassessment', 'qbehaviour_selfassess',
                     str_repeat("\u{2605}", $stars) . str_repeat("\u{2606}", self::MAX_NUMBER_OF_STARS - $stars)),
                     'self-assessment');
         }
 
-        list($comment, $commentformat) = $this->get_last_self_comment($qa);
-        if ($comment !== null) {
-            $output .= html_writer::div(get_string('commentx', 'question',
-                    format_text($comment, $commentformat, ['context' => $options->context])),
-                    'self-comment');
+        if ($question->canselfcomment) {
+            list($comment, $commentformat) = $this->get_last_self_comment($qa);
+            if ($comment !== null) {
+                $output .= html_writer::div(get_string('commentx', 'question',
+                        format_text($comment, $commentformat, ['context' => $options->context])),
+                        'self-comment');
+            }
         }
 
         return $output;
