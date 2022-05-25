@@ -46,16 +46,14 @@ class qbehaviour_selfassess_renderer extends qbehaviour_renderer {
             return '';
         }
 
-        $output = html_writer::start_div('self-assessment');
-
+        $output = '';
         if ($options->readonly === qbehaviour_selfassess::READONLY_EXCEPT_SELFASSESS) {
             $output .= $this->self_assessment_editable($qa, $options);
         } else {
             $output .= $this->self_assessment_read_only($qa, $options);
         }
 
-        $output .= html_writer::end_div();
-        return $output;
+        return html_writer::nonempty_tag('div', $output, ['class' => 'self-assessment']);
     }
 
     /**

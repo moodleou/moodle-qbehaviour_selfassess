@@ -405,4 +405,42 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(3);
         $this->check_step_count(3);
     }
+
+    public function test_selfassess_no_feedback() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $PAGE->set_url('/'); // Required to output a text editor without errors.
+
+        // Create a recordrtc question in the DB.
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('recordrtc', 'audio',
+                ['category' => $cat->id, 'generalfeedback' => '',
+                        'canselfrate' => 0, 'canselfcomment' => 0]);
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'interactive', 5);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->assertEquals('selfassess', $this->get_qa()->get_behaviour_name());
+        $this->render();
+
+        // Process a response and check the expected result.
+        $response = $this->store_submission_file('moodle-tim.ogg');
+        $response['-submit'] = '1';
+        $this->process_submission($response);
+
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->render();
+        // Verify that there is no feedback at all.
+        $this->assertStringNotContainsString('outcome', $this->currentoutput);
+    }
 }
