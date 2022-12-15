@@ -30,7 +30,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
-    And I should see "Submit: File recording.ogg"
+    And I should see "Submit: recording.ogg"
     And I click on "Rated 2 stars" "icon"
     And I press "Save"
     And I should see "Self-assessed 2 stars with no comment"
@@ -48,7 +48,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And "teacher" has recorded "moodle-sharon.ogg" into the record RTC question
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
-    And I should see "Submit: File recording.ogg"
+    And I should see "Submit: recording.ogg"
     And I should not see "Rating"
     And I set the following fields to these values:
       | Comment | Seems OK to me. |
@@ -65,7 +65,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I press "Save"
     Then I should see "I hope you spoke clearly and coherently."
     And I should not see "Comment" in the "div.self-assessment" "css_element"
-    And I should see "Submit: File recording.ogg"
+    And I should see "Submit: recording.ogg"
     And I click on "Rated 2 stars" "icon"
     And I press "Save"
     And I should see "Self-assessed 2 stars with no comment"
@@ -80,4 +80,4 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     Then I should see "I hope you spoke clearly and coherently."
     And I should not see "Rating"
     And I should not see "Comment" in the "div.selfassess" "css_element"
-    And I should see "Submit: File recording.ogg"
+    And I should see "Submit: recording.ogg"
