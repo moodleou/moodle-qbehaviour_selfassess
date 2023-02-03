@@ -1,5 +1,11 @@
 # Change log for the Self-assessment question behaviour
 
+## Changes in 1.4
+
+* Now supports explicit options for wether each or rating or comment are visible.
+* Fixed a bug if the student navigated around the quiz review while self-assessing.
+
+
 ## Changes in 1.3
 
 * This version works with Moodle 4.0.
