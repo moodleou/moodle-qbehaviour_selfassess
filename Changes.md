@@ -4,6 +4,7 @@
 
 * Now supports explicit options for whether students can rate and/or comment their work.
 * Fixed a bug if the student navigated around the quiz review while self-assessing.
+* This version supports PHP 8.1.
 
 
 ## Changes in 1.3

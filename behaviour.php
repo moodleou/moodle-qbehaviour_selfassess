@@ -183,7 +183,7 @@ class qbehaviour_selfassess extends question_behaviour_with_save {
      */
     protected function summarise_self_assess(question_attempt_step $step): string {
         $stars = $step->get_behaviour_var('stars');
-        $comment = $step->get_behaviour_var('selfcomment');
+        $comment = $step->get_behaviour_var('selfcomment') ?? '';
 
         $a = new stdClass();
         $a->stars = $stars;
