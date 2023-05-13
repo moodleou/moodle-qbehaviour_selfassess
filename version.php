@@ -28,6 +28,6 @@ $plugin->version   = 2023020300;
 $plugin->requires  = 2021051700;
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->component = 'qbehaviour_selfassess';
-$plugin->release   = 'v1.3+ for Moodle 3.11+';
+$plugin->release   = 'v1.4 for Moodle 3.11+';
 
 $plugin->outestssufficient = true;

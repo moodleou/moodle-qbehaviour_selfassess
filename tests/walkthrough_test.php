@@ -30,9 +30,11 @@ require_once(__DIR__ . '/../../../type/recordrtc/tests/walkthrough_test.php');
 /**
  * Unit tests for the self-assessment question behaviour.
  *
- * @package    qbehaviour_selfassess
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbehaviour_selfassess
+ * @copyright 2020 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qbehaviour_selfassess
+ * @covers    \qbehaviour_selfassess_renderer
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 

@@ -2,7 +2,7 @@
 
 ## Changes in 1.4
 
-* Now supports explicit options for wether each or rating or comment are visible.
+* Now supports explicit options for whether students can rate and/or comment their work.
 * Fixed a bug if the student navigated around the quiz review while self-assessing.
 
 

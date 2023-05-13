@@ -1,4 +1,4 @@
-@ou @ou_vle @qbehaviour @qbehaviour_selfassess @_switch_window @javascript
+@ou @ou_vle @qbehaviour @qbehaviour_selfassess
 Feature: Attempt (preview) a question using the self-assessment behaviour
   As a student
   In order to get value from embedded manually graded questions
@@ -21,6 +21,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
 
+  @javascript
   Scenario: Preview a question and try to submit a response with rating/comment.
     Given the following "questions" exist:
       | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
@@ -40,6 +41,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I press "Save"
     And I should see "Self-assessed 5 stars with comment: Seems OK to me."
 
+  @javascript
   Scenario: Preview a question with just comment UI, no ratings.
     Given the following "questions" exist:
       | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
@@ -55,6 +57,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I press "Save"
     And I should see "Commented: Seems OK to me."
 
+  @javascript
   Scenario: Preview a question with just rating, no comment.
     Given the following "questions" exist:
       | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
@@ -70,6 +73,7 @@ Feature: Attempt (preview) a question using the self-assessment behaviour
     And I press "Save"
     And I should see "Self-assessed 2 stars with no comment"
 
+  @javascript
   Scenario: Preview a question with neither comment nor rating.
     Given the following "questions" exist:
       | questioncategory | qtype     | name                  | template | canselfrate | canselfcomment |
