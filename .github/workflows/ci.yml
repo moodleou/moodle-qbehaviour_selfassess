@@ -9,6 +9,9 @@ jobs:
       matrix:
         include:
           - php: '8.4'
+            moodle-branch: 'main'
+            database: 'pgsql'
+          - php: '8.4'
             moodle-branch: 'MOODLE_501_STABLE'
             database: 'pgsql'
           - php: '8.3'
